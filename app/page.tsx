@@ -2,6 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import { Drawer } from "./components/Drawer";
 
 export default function Home() {
   const handleSubmit = (e: React.FormEvent) => {
