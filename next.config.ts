@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
   images: {
-    domains: ["bonupp.s3.eu-north-1.amazonaws.com"],
+    domains: ["bonupp.s3.eu-north-1.amazonaws.com", "randomuser.me"],
     remotePatterns: [
       {
         protocol: "https",
