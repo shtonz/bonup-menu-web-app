@@ -1,5 +1,5 @@
+"use client";
 import React from "react";
-import mongoose from "mongoose";
 import { RestaurantMenuHeader } from "../../components/menuPage/RestaurantMenuHeader";
 import { MenuDishGalley } from "../../components/menuPage/MenuDishGalley";
 import BottomDrawer from "../../components/menuPage/BottomDrawer";

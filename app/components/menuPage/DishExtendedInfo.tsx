@@ -1,12 +1,13 @@
-import React, { use, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { DishObject } from "@/app/data/models/Dish";
 import ModifiersForm from "../Dashboard/ModifiersForm";
 import {
-  UserIcon,
   XMarkIcon,
   PencilIcon,
   EyeIcon,
+  MinusCircleIcon,
+  PlusCircleIcon,
 } from "@heroicons/react/24/outline";
 
 type DishExtendedInfoProps = {
@@ -18,49 +19,28 @@ type DishExtendedInfoProps = {
 };
 
 const DishExtendedInfo: React.FC<DishExtendedInfoProps> = (props) => {
-  //extended dish info show consts
+  // Extended dish info show consts
   const [isVisible, setIsVisible] = useState(false);
   const [newDishInfo, setNewDishInfo] = useState<DishObject>(props.dishProps);
 
-  //extended dish info edit consts
+  // Extended dish info edit consts
   const [file, setFile] = useState<File | null>(null);
-  const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isEditBtnToggled, setisEditBtnToggled] = useState(false);
 
-  //extexded dish info common consts
+  // Extended dish info common consts
   const [isEditMode, setIsEditMode] = useState(props.isEditable);
   const [isEditable, setIsEditable] = useState(props.isEditable);
-  const [message, setMessage] = useState<string>("");
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      setFile(event.target.files[0]);
-      setNewDishInfo({
-        ...newDishInfo,
-        imageSrc: URL.createObjectURL(event.target.files[0]),
-      });
-    }
-  };
+  //Counter for Dish Quantity
+  const [dishCount, setDishCount] = useState(1);
 
-  const handleImageClick = () => {
-    fileInputRef.current?.click();
-  };
+  //Increase dish count
+  const incrementCount = () => setDishCount(dishCount + 1);
 
-  const handleInputValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNewDishInfo({
-      ...newDishInfo,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleTextAreaValueChange = (
-    e: React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
-    setNewDishInfo({
-      ...newDishInfo,
-      [e.target.name]: e.target.value,
-    });
+  //Decrease dish count (Minimum: 1)
+  const decrementCount = () => {
+    if (dishCount > 1) setDishCount(dishCount - 1);
   };
 
   useEffect(() => {
@@ -70,66 +50,100 @@ const DishExtendedInfo: React.FC<DishExtendedInfoProps> = (props) => {
 
   return (
     <>
-      <div className="flex justify-center items-center min-h-screen bg-gray-100 z-30">
-        <div
-          className={`flex flex-col z-30 w-11/12 h-5/6 fixed top-1/2 left-1/2 transform -translate-y-1/2 transition-transform duration-500 ease-in-out ${
-            isVisible ? "left-1/2 -translate-x-1/2" : "translate-x-full"
-          } w-4/5 bg-white rounded-lg shadow-lg p-6`}
+      <div
+        className={
+          isEditMode
+            ? ` flex flex-col z-30 w-max-[50%] h-max-[90%] fixed top-1/2 left-1/2 transform -translate-y-1/2 transition-transform duration-500 ease-in-out ${
+                isVisible ? "left-1/2 -translate-x-1/2" : "translate-x-full"
+              }  bg-white rounded-lg shadow-lg p-6 overflow-hidden`
+            : `flex flex-col z-30 w-full h-full fixed top-1/2 left-1/2 transform -translate-y-1/2 transition-transform duration-500 ease-in-out ${
+                isVisible ? "left-1/2 -translate-x-1/2" : "translate-x-full"
+              }  bg-white rounded-lg shadow-lg overflow-hidden`
+        }
+      >
+        {/*Close Button (Fixed to Upper Left of Image) */}
+        <button
+          onClick={() => props.onClose()}
+          className="absolute top-3 left-3 flex items-center justify-center w-8 h-8 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 transition duration-300 z-20"
         >
-          <div className="flex justify-between items-center mb-4">
-            <button
-              onClick={() => props.onClose()}
-              className="flex items-center justify-center w-8 h-8 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 transition duration-300"
-            >
-              <XMarkIcon className="w-6 h-6" />
-            </button>
-            {isEditMode ? (
-              <>
-                <button
-                  onClick={() => props.onClose()}
-                  className="flex items-center justify-center w-20 h-8 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 transition duration-300"
-                >
-                  Save
-                </button>
-                <button
-                  onClick={() => setisEditBtnToggled(!isEditBtnToggled)}
-                  className="flex items-center justify-center w-8 h-8 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 transition duration-300"
-                >
-                  {isEditBtnToggled ? (
-                    <PencilIcon className="w-6 h-6" />
-                  ) : (
-                    <EyeIcon className="w-6 h-6" />
-                  )}
-                </button>
-              </>
-            ) : (
-              <></>
-            )}
-          </div>
+          <XMarkIcon className="w-6 h-6" />
+        </button>
 
+        {/*Scrollable Content (Image is full width if isEditMode is false) */}
+
+        {/* <div className="overflow-y-auto max-h-full h-full  px-2"> */}
+        <div
+          className={`overflow-y-auto max-h-full h-full ${
+            isEditMode ? "px-6" : "px-0"
+          }`}
+        >
           {!isEditable ? (
             <>
-              <Image
-                className="w-full h-40 object-cover rounded-md mb-4"
-                src={props.dishProps.imageSrc}
-                width={100}
-                height={100}
-                alt="restaurant logo"
-              />
-              <h2 className="text-2xl font-bold text-gray-800 mb-4">
+              {/*Full-Width Image (Only When isEditMode is False) */}
+              {!isEditMode ? (
+                <div className="relative w-full">
+                  <Image
+                    className="w-full h-56 object-cover rounded-t-lg"
+                    src={props.dishProps.imageSrc}
+                    width={100}
+                    height={100}
+                    alt="restaurant logo"
+                  />
+                </div>
+              ) : (
+                <Image
+                  className="w-full h-40 object-cover rounded-md mb-4 hover:cursor-pointer"
+                  onClick={() => fileInputRef.current?.click()}
+                  src={newDishInfo.imageSrc}
+                  width={100}
+                  height={100}
+                  alt="restaurant logo"
+                />
+              )}
+
+              <h2 className="text-2xl font-bold text-gray-800 my-4 px-3 break-words">
                 {props.dishProps.name}
               </h2>
-              <p className="text-gray-600">{props.dishProps.description}</p>
-              <ModifiersForm
-                isEditMode={props.isEditMode}
-                isEditable={props.isEditable}
-              ></ModifiersForm>
+              <p className="text-gray-600 break-words line-clamp-2 px-3">
+                {props.dishProps.description}
+              </p>
+              <div className="mt-4 px-3">
+                <ModifiersForm
+                  isEditMode={props.isEditMode}
+                  isEditable={props.isEditable}
+                />
+              </div>
+              {/*Counter Section (Inside Scrollable Content) */}
+              <div className="flex items-center justify-center gap-4 mt-6">
+                <MinusCircleIcon
+                  className={`w-8 h-8 cursor-pointer ${
+                    dishCount > 1
+                      ? "text-gray-500 hover:text-red-500"
+                      : "text-gray-300"
+                  }`}
+                  onClick={decrementCount}
+                />
+                <span className="text-black text-lg font-semibold">
+                  {dishCount}
+                </span>
+                <PlusCircleIcon
+                  className="w-8 h-8 text-green-500 cursor-pointer hover:text-green-700"
+                  onClick={incrementCount}
+                />
+              </div>
+
+              {/*Add Dish Button (Inside Scrollable Content) */}
+              <div className="flex justify-center mt-4">
+                <button className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition duration-300">
+                  Add Dish
+                </button>
+              </div>
             </>
           ) : (
             <>
               <Image
                 className="w-full h-40 object-cover rounded-md mb-4 hover:cursor-pointer"
-                onClick={handleImageClick}
+                onClick={() => fileInputRef.current?.click()}
                 src={newDishInfo.imageSrc}
                 width={100}
                 height={100}
@@ -139,29 +153,31 @@ const DishExtendedInfo: React.FC<DishExtendedInfoProps> = (props) => {
                 type="file"
                 ref={fileInputRef}
                 className="hidden"
-                onChange={handleFileChange}
                 accept="image/*"
               />
               <input
-                className="text-2xl font-bold text-gray-800 mb-4 bg-slate-100"
+                className="text-2xl font-bold text-gray-800 mb-4 bg-slate-100 w-full break-words"
                 placeholder="Enter Dish Title"
-                onChange={(e) => {
-                  handleInputValueChange(e);
-                }}
+                onChange={(e) =>
+                  setNewDishInfo({ ...newDishInfo, name: e.target.value })
+                }
               />
               <textarea
                 name="description"
                 id="dish_description"
                 placeholder="Enter Dish Description"
-                className="text-xl text-gray-800 mb-4 bg-slate-100"
-                onChange={(e) => {
-                  handleTextAreaValueChange(e);
-                }}
+                className="text-xl text-gray-800 mb-4 bg-slate-100 w-full break-words"
+                onChange={(e) =>
+                  setNewDishInfo({
+                    ...newDishInfo,
+                    description: e.target.value,
+                  })
+                }
               />
               <ModifiersForm
                 isEditMode={props.isEditMode}
                 isEditable={props.isEditable}
-              ></ModifiersForm>
+              />
             </>
           )}
         </div>

@@ -91,7 +91,9 @@ const ReviewOrder: React.FC<OrderListProps> = ({
                 />
               )}
 
-              <span className="w-6 text-center">{item.count}</span>
+              <span className="text-gray-800 w-6 text-center">
+                {item.count}
+              </span>
 
               <PlusCircleIcon
                 className="w-6 h-6 text-green-500 cursor-pointer"

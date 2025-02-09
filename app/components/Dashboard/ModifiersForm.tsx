@@ -110,8 +110,8 @@ const ModifiersDynamicForm: React.FC<ModifiersDynamicFormProps> = (props) => {
 
   useEffect(() => {
     //console.log("Elements Updated:", elements);
-    addElement("checkbox");
-    //addElement("radio-group");
+    //addElement("checkbox");
+    addElement("radio-group");
     //addElement("multi-checkbox");
   }, []);
 

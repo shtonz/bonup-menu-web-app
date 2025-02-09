@@ -5,6 +5,13 @@ import { MenuNavBar } from "./MenuNavBar";
 import { DishObject } from "@/app/data/models/Dish";
 import DishExtendedInfo from "./DishExtendedInfo";
 
+let menuData: DishObject[] | null = null;
+
+// // Declare a global variable in Next.js
+// declare global {
+//   var menuData: DishObject[] | null;
+// }
+
 type MenuDishGalleyProps = {
   isEditmode: boolean;
   isEditable: boolean;
@@ -37,16 +44,7 @@ export const MenuDishGalley: React.FC<MenuDishGalleyProps> = (props) => {
     dishCardProps: DishCardProps
   ) => {
     setIsVisible(true);
-    console.log("isvisible", isVisible);
-    setDishExtendedInfo({
-      ...dishExtendedInfo,
-      name: dishCardProps.dishProps.name,
-      description: dishCardProps.dishProps.description,
-      category: dishCardProps.dishProps.category,
-      isPromoted: dishCardProps.dishProps.isPromoted,
-      price: dishCardProps.dishProps.price,
-      imageSrc: dishCardProps.dishProps.imageSrc,
-    });
+    setDishExtendedInfo(dishCardProps.dishProps);
   };
 
   useEffect(() => {
@@ -61,6 +59,8 @@ export const MenuDishGalley: React.FC<MenuDishGalleyProps> = (props) => {
         }
         const data: DishObject[] = await res.json();
         setDishes(data);
+        menuData = data;
+        console.log("menuData", menuData);
       } catch (err: any) {
         console.error("Error fetching dishes:", err);
       }
@@ -80,27 +80,12 @@ export const MenuDishGalley: React.FC<MenuDishGalleyProps> = (props) => {
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
           {dishes?.map((dish: DishObject) => (
             <DishMenuCard
-              dishProps={{
-                name: dish.name,
-                category: dish.category,
-                subCategory: dish.subCategory,
-                description: dish.description,
-                isPromoted: dish.isPromoted,
-                isPromotedSize: dish.isPromotedSize,
-                bannerText: dish.bannerText,
-                price: dish.price,
-                modifiers: dish.modifiers,
-                imageSrc: dish.imageSrc,
-                iconSrc: dish.iconSrc,
-                score: dish.score,
-                cost: dish.cost,
-              }}
+              dishProps={dish}
               onClick={handleDishClicked}
             ></DishMenuCard>
           ))}
         </div>
       </div>
-
       <DishExtendedInfo
         dishProps={dishExtendedInfo}
         isVisible={isVisible}
