@@ -2,6 +2,7 @@ import mongoose, { Schema, Types } from "mongoose";
 
 //must be the same as DishSchema
 export type DishObject = {
+  id: number;
   name: string;
   category: string;
   subCategory: string;

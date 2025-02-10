@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { DishObject } from "@/app/data/models/Dish";
 import ModifiersForm from "../Dashboard/ModifiersForm";
@@ -9,6 +9,7 @@ import {
   MinusCircleIcon,
   PlusCircleIcon,
 } from "@heroicons/react/24/outline";
+import { useOrderItems } from "@/app/bonup/menu/context";
 
 type DishExtendedInfoProps = {
   dishProps: DishObject;
@@ -22,15 +23,16 @@ const DishExtendedInfo: React.FC<DishExtendedInfoProps> = (props) => {
   // Extended dish info show consts
   const [isVisible, setIsVisible] = useState(false);
   const [newDishInfo, setNewDishInfo] = useState<DishObject>(props.dishProps);
-
   // Extended dish info edit consts
   const [file, setFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isEditBtnToggled, setisEditBtnToggled] = useState(false);
-
   // Extended dish info common consts
   const [isEditMode, setIsEditMode] = useState(props.isEditable);
   const [isEditable, setIsEditable] = useState(props.isEditable);
+  //contexts
+  const { orderItems, addOrderItem, removeOrderItem, updateOrderItem } =
+    useOrderItems();
 
   //Counter for Dish Quantity
   const [dishCount, setDishCount] = useState(1);
@@ -45,8 +47,20 @@ const DishExtendedInfo: React.FC<DishExtendedInfoProps> = (props) => {
 
   useEffect(() => {
     setIsVisible(props.isVisible);
-    if (props.isEditable) setNewDishInfo(props.dishProps);
+    //if (props.isEditable) setNewDishInfo(props.dishProps);
+    setNewDishInfo(props.dishProps);
   }, [props.isVisible]);
+
+  const handleAddDishBtnClick = () => {
+    for (let i = 0; i < dishCount; i++) {
+      console.log(i);
+      addOrderItem({
+        dishProps: newDishInfo,
+        count: dishCount,
+        id: "",
+      });
+    }
+  };
 
   return (
     <>
@@ -134,7 +148,10 @@ const DishExtendedInfo: React.FC<DishExtendedInfoProps> = (props) => {
 
               {/*Add Dish Button (Inside Scrollable Content) */}
               <div className="flex justify-center mt-4">
-                <button className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition duration-300">
+                <button
+                  onClick={handleAddDishBtnClick}
+                  className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition duration-300"
+                >
                   Add Dish
                 </button>
               </div>

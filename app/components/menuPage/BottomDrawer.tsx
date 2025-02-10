@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import ReviewOrderList from "./ReviewOrder";
 import ReviewOrder from "./ReviewOrder";
 
 export default function BottomDrawer() {
@@ -47,12 +48,8 @@ export default function BottomDrawer() {
           title="Your Order"
           avatar="https://randomuser.me/api/portraits/men/1.jpg"
           status="Waiting for confirmation"
-          initialItems={[
-            { id: 1, name: "Burger", description: "Cheese & Bacon", count: 1 },
-            { id: 2, name: "Fries", description: "Large Size", count: 2 },
-          ]}
         />
-        <ReviewOrder
+        {/* <ReviewOrder
           title="Jane Smith"
           avatar="https://randomuser.me/api/portraits/women/1.jpg"
           status="Order Sent"
@@ -69,7 +66,7 @@ export default function BottomDrawer() {
             { id: 3, name: "Pizza", description: "Pepperoni", count: 1 },
             { id: 4, name: "Soda", description: "Coke", count: 3 },
           ]}
-        />
+        /> */}
       </div>
     </motion.div>
   );

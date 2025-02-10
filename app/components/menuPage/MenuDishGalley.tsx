@@ -1,16 +1,9 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import { DishCardProps, DishMenuCard } from "./DishMenuCard";
 import { MenuNavBar } from "./MenuNavBar";
 import { DishObject } from "@/app/data/models/Dish";
 import DishExtendedInfo from "./DishExtendedInfo";
-
-let menuData: DishObject[] | null = null;
-
-// // Declare a global variable in Next.js
-// declare global {
-//   var menuData: DishObject[] | null;
-// }
 
 type MenuDishGalleyProps = {
   isEditmode: boolean;
@@ -21,6 +14,7 @@ export const MenuDishGalley: React.FC<MenuDishGalleyProps> = (props) => {
   const [isVisible, setIsVisible] = useState(false);
 
   const [dishExtendedInfo, setDishExtendedInfo] = useState<DishObject>({
+    id: 0,
     name: "",
     category: "",
     subCategory: "",
@@ -59,8 +53,6 @@ export const MenuDishGalley: React.FC<MenuDishGalleyProps> = (props) => {
         }
         const data: DishObject[] = await res.json();
         setDishes(data);
-        menuData = data;
-        console.log("menuData", menuData);
       } catch (err: any) {
         console.error("Error fetching dishes:", err);
       }
