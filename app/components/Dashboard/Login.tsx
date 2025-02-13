@@ -40,12 +40,6 @@ export default function Login() {
           >
             Login
           </Link>
-          {/* <button
-            type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-300"
-          >
-            Login
-          </button> */}
         </form>
       </div>
     </div>

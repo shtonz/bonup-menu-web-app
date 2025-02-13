@@ -5,7 +5,7 @@ import {
   MinusCircleIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-import { useOrderItems } from "@/app/bonup/menu/context";
+import { useOrderItems } from "@/app/bonup/menu/OrderItemsContext";
 
 type OrderListProps = {
   title: string;

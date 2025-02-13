@@ -6,6 +6,7 @@ export const NewDishForm = () => {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [newDishInfo, setNewDishInfo] = useState<DishObject>({
+    id: 0,
     name: "",
     description: "",
     category: "",

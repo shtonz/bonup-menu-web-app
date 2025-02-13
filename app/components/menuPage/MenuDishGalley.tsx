@@ -4,10 +4,11 @@ import { DishCardProps, DishMenuCard } from "./DishMenuCard";
 import { MenuNavBar } from "./MenuNavBar";
 import { DishObject } from "@/app/data/models/Dish";
 import DishExtendedInfo from "./DishExtendedInfo";
+import DishExtendedInfoUpdateEdit from "./DishExtendedInfoUpdateEdit";
+import CarouselNavbar from "./CarouselNavbar";
 
 type MenuDishGalleyProps = {
   isEditmode: boolean;
-  isEditable: boolean;
 };
 
 export const MenuDishGalley: React.FC<MenuDishGalleyProps> = (props) => {
@@ -67,7 +68,12 @@ export const MenuDishGalley: React.FC<MenuDishGalleyProps> = (props) => {
 
   return (
     <>
-      <MenuNavBar></MenuNavBar>
+      {props.isEditmode ? (
+        <MenuNavBar></MenuNavBar>
+      ) : (
+        <CarouselNavbar></CarouselNavbar>
+      )}
+
       <div className="max-w-6xl mx-auto p-1">
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
           {dishes?.map((dish: DishObject) => (
@@ -78,13 +84,20 @@ export const MenuDishGalley: React.FC<MenuDishGalleyProps> = (props) => {
           ))}
         </div>
       </div>
-      <DishExtendedInfo
-        dishProps={dishExtendedInfo}
-        isVisible={isVisible}
-        onClose={handleExtexdedInfoClose}
-        isEditMode={props.isEditmode}
-        isEditable={props.isEditable}
-      />
+      {props.isEditmode ? (
+        <DishExtendedInfoUpdateEdit
+          dishProps={dishExtendedInfo}
+          isVisible={isVisible}
+          onClose={handleExtexdedInfoClose}
+          isNewDish={false}
+        ></DishExtendedInfoUpdateEdit>
+      ) : (
+        <DishExtendedInfo
+          dishProps={dishExtendedInfo}
+          isVisible={isVisible}
+          onClose={handleExtexdedInfoClose}
+        />
+      )}
     </>
   );
 };

@@ -1,4 +1,5 @@
 import mongoose, { Schema, Types } from "mongoose";
+import { Modifiers } from "./Modifiers";
 
 //must be the same as DishSchema
 export type DishObject = {
@@ -31,13 +32,13 @@ const DishSchema = new mongoose.Schema(
     iconSrc: { type: String, required: true },
     score: { type: Number, required: true },
     cost: { type: Number, required: true },
-    modifiers: {},
+    //Modifiers: { type: Modifiers, required: false },
     imageSrc: { type: String, required: true },
-    restaurant: {
-      type: Schema.Types.ObjectId,
-      ref: "Restaurant",
-      required: true,
-    }, // One-to-One relationship
+    // restaurant: {
+    //   type: Schema.Types.ObjectId,
+    //   ref: "Restaurant",
+    //   required: true,
+    // }, // One-to-One relationship
   },
   { timestamps: true }
 );

@@ -3,13 +3,13 @@ import React from "react";
 import { RestaurantMenuHeader } from "../../components/menuPage/RestaurantMenuHeader";
 import { MenuDishGalley } from "../../components/menuPage/MenuDishGalley";
 import BottomDrawer from "../../components/menuPage/BottomDrawer";
-import { OrderItemsProvider } from "./context";
+import { OrderItemsProvider } from "./OrderItemsContext";
 
 const menuPage: React.FC = () => {
   const RestaurantMenuHeaderBckImg =
-    "https://bonupp.s3.eu-north-1.amazonaws.com/FirstRestaurant/home_background/Hamburger.jpg";
+    "https://bonupp.s3.eu-north-1.amazonaws.com/FirstRestaurant/dishes_images/Cover.jpg";
   const RestaurantMenuHeaderBrdImg =
-    "https://bonupp.s3.eu-north-1.amazonaws.com/FirstRestaurant/home_logo/mvpLogo.png";
+    "https://bonupp.s3.eu-north-1.amazonaws.com/FirstRestaurant/dishes_images/logo.jpg";
 
   return (
     <>
@@ -19,10 +19,7 @@ const menuPage: React.FC = () => {
             backgroundImageSrc={RestaurantMenuHeaderBckImg}
             brandImageSrc={RestaurantMenuHeaderBrdImg}
           ></RestaurantMenuHeader>
-          <MenuDishGalley
-            isEditable={false}
-            isEditmode={false}
-          ></MenuDishGalley>
+          <MenuDishGalley isEditmode={false}></MenuDishGalley>
           <BottomDrawer></BottomDrawer>
         </div>
       </OrderItemsProvider>
