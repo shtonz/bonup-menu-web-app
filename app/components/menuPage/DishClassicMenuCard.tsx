@@ -3,7 +3,7 @@ import React from "react";
 import Image from "next/image";
 import { DishObject } from "@/app/data/models/Dish";
 
-export type DishCardProps = {
+type DishClassicCardProps = {
   dishProps: DishObject;
   onClick: (
     e: React.MouseEvent<HTMLDivElement>,
@@ -11,7 +11,7 @@ export type DishCardProps = {
   ) => void;
 };
 
-export const DishMenuCard: React.FC<DishCardProps> = (props) => {
+export const DishClassicMenuCard: React.FC<DishClassicCardProps> = (props) => {
   let classNameProps = "";
   if (!props.dishProps.isPromoted) {
     classNameProps = "relative bg-white rounded-lg shadow-sm p-1";

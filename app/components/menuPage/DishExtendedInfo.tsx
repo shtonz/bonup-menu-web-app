@@ -60,7 +60,7 @@ const DishExtendedInfo: React.FC<DishExtendedInfoProps> = (props) => {
       {/* Scrollable Content */}
       <div className="overflow-y-auto w-full h-full">
         {/* Full-Width Image */}
-        <div className="relative w-full">
+        <div className="relative w-full shadow-[0px_0px_5px_rgba(0,0,0,0.4)]">
           <Image
             className="w-full h-56 object-cover rounded-t-lg"
             src={props.dishProps.imageSrc}
@@ -68,16 +68,17 @@ const DishExtendedInfo: React.FC<DishExtendedInfoProps> = (props) => {
             height={250}
             alt="Dish Image"
           />
-        </div>
-        <div className="px-3">
-          <h2 className="text-2xl font-bold my-4">{props.dishProps.name}</h2>
-          <p className="text-gray-600 line-clamp-2">
+          <h2 className="px-3 text-2xl font-bold my-1">
+            {props.dishProps.name}
+          </h2>
+          <h2 className="px-3 text-lg font-bold">{props.dishProps.price}</h2>
+          <p className="text-gray-600 line-clamp-2 px-3">
             {props.dishProps.description}
           </p>
+        </div>
 
+        <div className="px-3">
           <ModifiersList editMode={false}></ModifiersList>
-
-          <div className="text-lg font-bold my-4">Comments</div>
 
           {/* Counter Section */}
           <div className="flex items-center justify-center gap-4 mt-6">
@@ -102,11 +103,15 @@ const DishExtendedInfo: React.FC<DishExtendedInfoProps> = (props) => {
           <div className="flex justify-center mt-4">
             <button
               onClick={handleAddDishBtnClick}
-              className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition duration-300"
+              className="bg-cyan-600 w-full text-white px-6 py-2 rounded-3xl hover:bg-blue-600 transition duration-300"
             >
               Add Dish
             </button>
           </div>
+
+          {/* Comments Section */}
+          <div className="text-lg font-bold my-4">Comments</div>
+          <textarea className="bg-white rounded-md border drop-shadow-lg shadow-[5px_5px_10px_rgba(0,0,0,0.3)] w-full h-24"></textarea>
         </div>
       </div>
     </div>

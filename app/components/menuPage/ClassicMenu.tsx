@@ -7,11 +7,11 @@ import DishExtendedInfo from "./DishExtendedInfo";
 import DishExtendedInfoUpdateEdit from "./DishExtendedInfoUpdateEdit";
 import CarouselNavbar from "./CarouselNavbar";
 
-type MenuDishGalleyProps = {
+type ClassicMenuProps = {
   isEditmode: boolean;
 };
 
-export const MenuDishGalley: React.FC<MenuDishGalleyProps> = (props) => {
+export const ClassicMenu: React.FC<ClassicMenuProps> = (props) => {
   const [isVisible, setIsVisible] = useState(false);
 
   const [dishExtendedInfo, setDishExtendedInfo] = useState<DishObject>({
@@ -68,11 +68,11 @@ export const MenuDishGalley: React.FC<MenuDishGalleyProps> = (props) => {
 
   return (
     <>
-      {props.isEditmode ? (
+      {/* {props.isEditmode ? (
         <MenuNavBar></MenuNavBar>
       ) : (
         <CarouselNavbar></CarouselNavbar>
-      )}
+      )} */}
 
       <div className="bg-white max-w-6xl mx-auto p-1">
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">

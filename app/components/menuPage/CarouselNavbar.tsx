@@ -106,7 +106,7 @@ const CircularScrollList = () => {
     // Determine how far the item is from the container left, then scroll by that amount.
     const containerLeft = container.getBoundingClientRect().left;
     const itemLeft = targetItem.getBoundingClientRect().left;
-    const distanceToLeftEdge = itemLeft - containerLeft;
+    const distanceToLeftEdge = itemLeft - containerLeft - 5;
 
     // Use scrollBy so it smoothly animates rather than jumping (snapping).
     container.scrollBy({
@@ -134,8 +134,10 @@ const CircularScrollList = () => {
                   if (el) itemRefs.current[index] = el;
                 }}
                 onClick={() => handleItemClick(index)}
-                className={`mx-2 flex-shrink-0 cursor-pointer ${
-                  isSelected ? "text-blue-500 underline" : "text-gray-800"
+                className={`mx-3 flex-shrink-0 cursor-pointer ${
+                  isSelected
+                    ? " text-gray-800 underline font-semibold"
+                    : "text-gray-800"
                 }`}
               >
                 {item}

@@ -305,7 +305,7 @@ const ModifiersList: React.FC<ListComponentProps> = ({ editMode = false }) => {
                   }
                 }}
                 className={`px-4 py-1 mt-auto rounded-md text-black w-full 
-                  ${option.selected ? "bg-green-400" : "bg-gray-200"}
+                  ${option.selected ? "bg-yellow-500" : "bg-gray-200"}
                 `}
               >
                 {option.label}
@@ -330,20 +330,23 @@ const ModifiersList: React.FC<ListComponentProps> = ({ editMode = false }) => {
   return (
     <div className="mx-auto max-w-3xl mt-5">
       {items.map((item) => (
-        <div key={item.id} className="flex items-start justify-between mb-6">
-          {/* Render the item content */}
-          {renderItem(item)}
+        <div>
+          <div key={item.id} className="flex items-start justify-between mb-6">
+            {/* Render the item content */}
+            {renderItem(item)}
 
-          {/* "x" button to delete item (only in edit mode) */}
-          {editMode && (
-            <button
-              onClick={() => handleRemoveItem(item.id)}
-              className="ml-4 text-gray-700 bg-gray-200 hover:bg-gray-300 p-2 rounded-md h-fit"
-              title="Delete"
-            >
-              x
-            </button>
-          )}
+            {/* "x" button to delete item (only in edit mode) */}
+            {editMode && (
+              <button
+                onClick={() => handleRemoveItem(item.id)}
+                className="ml-4 text-gray-700 bg-gray-200 hover:bg-gray-300 p-2 rounded-md h-fit"
+                title="Delete"
+              >
+                x
+              </button>
+            )}
+          </div>
+          <hr className="my-3 border-gray-300 dark:border-gray-600" />
         </div>
       ))}
 

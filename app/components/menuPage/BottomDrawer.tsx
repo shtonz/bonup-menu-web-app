@@ -32,11 +32,11 @@ export default function BottomDrawer() {
           }
         }}
         onClick={() => setIsOpen(!isOpen)}
-        className="bg-slate-200 z-20 w-full h-10 flex justify-center items-center cursor-pointer"
+        className="bg-cyan-500 z-20 w-full h-14 flex justify-center items-center cursor-pointer"
       >
         <div className="flex flex-col items-center">
-          <div className="w-20 h-1 bg-gray-400 rounded-full"></div>
-          <div className="bg-blue-400 rounded-lg text-black font m-1 px-4">
+          <div className="w-20 h-1 bg-cyan-200 rounded-full"></div>
+          <div className="font-bold  rounded-lg text-slate-100 font m-1 px-4">
             Review Order
           </div>
         </div>

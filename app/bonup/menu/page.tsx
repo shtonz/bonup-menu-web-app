@@ -1,11 +1,14 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { RestaurantMenuHeader } from "../../components/menuPage/RestaurantMenuHeader";
 import { MenuDishGalley } from "../../components/menuPage/MenuDishGalley";
 import BottomDrawer from "../../components/menuPage/BottomDrawer";
 import { OrderItemsProvider } from "./OrderItemsContext";
+import { ClassicMenu } from "@/app/components/menuPage/ClassicMenu";
 
 const menuPage: React.FC = () => {
+  const isGalleryMenu = useState(false);
+
   const RestaurantMenuHeaderBckImg =
     "https://bonupp.s3.eu-north-1.amazonaws.com/FirstRestaurant/dishes_images/Cover.jpg";
   const RestaurantMenuHeaderBrdImg =
@@ -20,6 +23,7 @@ const menuPage: React.FC = () => {
             brandImageSrc={RestaurantMenuHeaderBrdImg}
           ></RestaurantMenuHeader>
           <MenuDishGalley isEditmode={false}></MenuDishGalley>
+          {/* <ClassicMenu isEditmode={false}></ClassicMenu> */}
           <BottomDrawer></BottomDrawer>
         </div>
       </OrderItemsProvider>
