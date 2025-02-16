@@ -1,12 +1,12 @@
 "use client";
-import { DishObject } from "@/app/data/models/Dish";
+import { IDish } from "@/app/data/models/DishModel";
 import React, { useState } from "react";
 
 export const NewDishForm = () => {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [newDishInfo, setNewDishInfo] = useState<DishObject>({
-    id: 0,
+  const [newDishInfo, setNewDishInfo] = useState<IDish>({
+    uiId: 0,
     name: "",
     description: "",
     category: "",
@@ -19,7 +19,7 @@ export const NewDishForm = () => {
     iconSrc: "",
     score: 0,
     cost: 0,
-    modifiers: {},
+    ModifiersListItems: [],
   });
   const [message, setMessage] = useState<string>("");
 
@@ -67,7 +67,6 @@ export const NewDishForm = () => {
       const imageUrl = uploadUrl.split("?")[0]; // Extract clean URL
       setNewDishInfo({
         ...newDishInfo,
-        modifiers: {},
         imageSrc: imageUrl as string,
       });
 

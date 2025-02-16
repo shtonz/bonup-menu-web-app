@@ -1,12 +1,23 @@
-import mongoose, { Schema, Document, Model } from "mongoose";
+import mongoose, { Schema, Model } from "mongoose";
 
 /**
  * An option in a radio/multi-select group.
  */
-interface Option {
+export interface Option {
+  id: string;
   label: string;
   selected: boolean;
 }
+
+interface IITEM_TYPES {
+  RADIO: string;
+  MULTI_SELECT: string;
+}
+
+export const ITEM_TYPES: IITEM_TYPES = {
+  RADIO: "RADIO",
+  MULTI_SELECT: "MULTI_SELECT",
+};
 
 /**
  * A single item in the list.
@@ -14,8 +25,8 @@ interface Option {
  * - title: Title of the group
  * - options: array of toggleable options
  */
-interface ListItem {
-  type: "RADIO" | "MULTI_SELECT";
+export interface ModifiersListItem {
+  type: string;
   title: string;
   options: Option[];
 }
@@ -24,10 +35,8 @@ interface ListItem {
  * The overall List document in MongoDB.
  * - items: array of ListItems (radio or multi-select)
  */
-export interface ListDocument extends Document {
-  items: ListItem[];
-  createdAt: Date;
-  updatedAt: Date;
+export interface ModifiersList {
+  items: ModifiersListItem[];
 }
 
 const OptionSchema = new Schema<Option>({
@@ -35,7 +44,7 @@ const OptionSchema = new Schema<Option>({
   selected: { type: Boolean, default: false },
 });
 
-const ListItemSchema = new Schema<ListItem>({
+export const ListItemSchema = new Schema<ModifiersListItem>({
   type: {
     type: String,
     enum: ["RADIO", "MULTI_SELECT"],
@@ -52,7 +61,7 @@ const ListItemSchema = new Schema<ListItem>({
   },
 });
 
-const ModifiersSchema = new Schema<ListDocument>(
+const ModifiersSchema = new Schema<ModifiersList>(
   {
     items: {
       type: [ListItemSchema],
@@ -68,5 +77,9 @@ const ModifiersSchema = new Schema<ListDocument>(
  * Because Next.js may reload modules during development, check if the model
  * is already compiled in Mongoose. Otherwise, compile it.
  */
-export const Modifiers: Model<ListDocument> =
-  mongoose.models.List || mongoose.model<ListDocument>("List", ModifiersSchema);
+const ModifiersListModel: Model<ModifiersList> = mongoose.model<ModifiersList>(
+  "List",
+  ModifiersSchema
+);
+
+export default ModifiersListModel;

@@ -1,24 +1,38 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { DishCardProps } from "./DishMenuCard";
+import { DishCardProps, DishMenuCard } from "./DishMenuCard";
 import { IDish } from "@/app/data/models/DishModel";
 import DishExtendedInfo from "./DishExtendedInfo";
 import DishExtendedInfoUpdateEdit from "./DishExtendedInfoUpdateEdit";
 import { DishClassicMenuCard } from "./DishClassicMenuCard";
 import { RestaurantMenuHeader } from "./RestaurantMenuHeader";
+import MenuNavBar, { NavBarCategory } from "./MenuNavBar";
+import { generateId } from "@/app/Utils/Utils";
 
-type ClassicMenuProps = {
+export enum MenuType {
+  "GalleryMenu",
+  "ClassicMenu",
+}
+
+type MenuProps = {
+  menuType: MenuType;
   includeNavbar: boolean;
   includeRestaurantHeader: boolean;
   isEditmode: boolean;
 };
 
-export const ClassicMenu: React.FC<ClassicMenuProps> = (props) => {
-  const [isVisible, setIsVisible] = useState(props.includeNavbar);
+export const Menu: React.FC<MenuProps> = (props) => {
+  //   const HEADER_HEIGHT = 142; //px
+  //   const NAVBAR_HEIGHT = 10; //px
+  //   const totalFixedHeight = HEADER_HEIGHT + NAVBAR_HEIGHT; //px
+  const [menuType, setMenuType] = useState<MenuType>(props.menuType);
+  const [isVisible, setIsVisible] = useState(false);
   const [includeNavbar, setIncludeNavbar] = useState(
     props.includeRestaurantHeader
   );
-  const [includeRestaurantHeader, setIncludeRestaurantHeader] = useState(false);
+  const [includeRestaurantHeader, setIncludeRestaurantHeader] = useState(
+    props.includeRestaurantHeader
+  );
   const [dishExtendedInfo, setDishExtendedInfo] = useState<IDish>({
     _id: "",
     uiId: 0,
@@ -77,17 +91,46 @@ export const ClassicMenu: React.FC<ClassicMenuProps> = (props) => {
     setIsVisible(false);
   };
 
-  return <></>;
+  const handleOnCategoryChanged = (category: NavBarCategory) => {
+    const targetElement = document.getElementById(category.name);
+    if (targetElement) {
+      console.log(category.name);
+      targetElement.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <>
-      <div className="bg-white max-w-6xl mx-auto p-1 text-black">
+      <div className="bg-white max-w-6xl mx-auto p-0 text-black flex-col top-0 left-0 m-h-screen w-full">
         {includeRestaurantHeader && (
-          <RestaurantMenuHeader
-            backgroundImageSrc={RestaurantMenuHeaderBckImg}
-            brandImageSrc={RestaurantMenuHeaderBrdImg}
-          ></RestaurantMenuHeader>
+          //<div className="fixed top-0 left-0 w-full z-50">
+          <div>
+            <RestaurantMenuHeader
+              backgroundImageSrc={RestaurantMenuHeaderBckImg}
+              brandImageSrc={RestaurantMenuHeaderBrdImg}
+            ></RestaurantMenuHeader>
+          </div>
         )}
-        <div>
+        {includeNavbar && (
+          //   <div
+          //     className="fixed top-0 left-0 w-full z-50"
+          //     style={{ top: HEADER_HEIGHT, height: NAVBAR_HEIGHT }}
+          //   >
+          <div>
+            <MenuNavBar
+              onCategorySelect={handleOnCategoryChanged}
+              categories={categories.map((name) => ({
+                id: generateId(),
+                name,
+              }))}
+            ></MenuNavBar>
+          </div>
+        )}
+
+        <div
+        //   className="max-w-6xl mx-auto p-1"
+        //    style={{ marginTop: totalFixedHeight + 35 }}
+        >
           {categories.map((category) => {
             // Filter dishes belonging to the current category
             const catDishes = dishes!.filter(
@@ -100,9 +143,17 @@ export const ClassicMenu: React.FC<ClassicMenuProps> = (props) => {
             );
 
             return (
-              <div key={category}>
+              <div className="px-1" key={category}>
                 {/* Category title */}
-                <h2 style={{ marginTop: "" }}>{category}</h2>
+                {menuType === MenuType.ClassicMenu && (
+                  <h2 id={category} className="font-semibold text-2xl">
+                    {category}
+                  </h2>
+                )}
+
+                {menuType === MenuType.GalleryMenu && (
+                  <h2 id={category} className="font-semibold text-2xl"></h2>
+                )}
 
                 {subCategories.map((subCategory) => {
                   // Filter dishes belonging to the current subcategory
@@ -111,26 +162,38 @@ export const ClassicMenu: React.FC<ClassicMenuProps> = (props) => {
                   );
 
                   return (
-                    <div key={subCategory} style={{ marginLeft: "" }}>
+                    <div key={subCategory}>
                       {/* Subcategory title */}
-                      <h3 style={{ marginTop: "1.5rem" }}>{subCategory}</h3>
+                      <h3 className="font-semibold">{subCategory}</h3>
 
                       {/* Render the dishes */}
-                      <div
-                        style={{
-                          display: "flex",
-                          flexWrap: "wrap",
-                          gap: "1rem",
-                        }}
-                      >
-                        {subCatDishes.map((dish) => (
-                          <DishClassicMenuCard
-                            key={dish._id}
-                            dishProps={dish}
-                            onClick={handleDishClicked}
-                          />
-                        ))}
-                      </div>
+                      {menuType === MenuType.GalleryMenu ? (
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
+                          {subCatDishes.map((dish) => (
+                            <DishMenuCard
+                              key={dish._id}
+                              dishProps={dish}
+                              onClick={handleDishClicked}
+                            />
+                          ))}
+                        </div>
+                      ) : (
+                        <div
+                          style={{
+                            display: "flex",
+                            flexWrap: "wrap",
+                            gap: "1rem",
+                          }}
+                        >
+                          {subCatDishes.map((dish) => (
+                            <DishClassicMenuCard
+                              key={dish._id}
+                              dishProps={dish}
+                              onClick={handleDishClicked}
+                            />
+                          ))}
+                        </div>
+                      )}
                     </div>
                   );
                 })}
@@ -138,14 +201,6 @@ export const ClassicMenu: React.FC<ClassicMenuProps> = (props) => {
             );
           })}
         </div>
-        {/* <div className="">
-          {dishes?.map((dish: IDish) => (
-            <DishClassicMenuCard
-              dishProps={dish}
-              onClick={handleDishClicked}
-            ></DishClassicMenuCard>
-          ))}
-        </div> */}
       </div>
       {props.isEditmode ? (
         <DishExtendedInfoUpdateEdit

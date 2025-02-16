@@ -1,20 +1,20 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { DishObject } from "@/app/data/models/Dish";
+import { IDish } from "@/app/data/models/DishModel";
 import { XMarkIcon, EyeIcon } from "@heroicons/react/24/outline";
 import ModifiersList from "../Dashboard/ModifiersList";
 
 type DishExtendedInfoProps = {
   isNewDish: boolean;
-  dishProps: DishObject;
+  dishProps: IDish;
   isVisible: boolean;
   onClose: () => void;
 };
 
 const DishExtendedInfoUpdateEdit: React.FC<DishExtendedInfoProps> = (props) => {
   const [isVisible, setIsVisible] = useState(false);
-  const [newDishInfo, setNewDishInfo] = useState<DishObject>(props.dishProps);
+  const [newDishInfo, setNewDishInfo] = useState<IDish>(props.dishProps);
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -37,7 +37,7 @@ const DishExtendedInfoUpdateEdit: React.FC<DishExtendedInfoProps> = (props) => {
 
       const previewURL = URL.createObjectURL(selectedFile);
       setPreviewImage(previewURL);
-      console.log("previewURL: ", previewURL);
+      console.log("previewURL: ", event.target.files[0]);
     }
   };
 
@@ -87,7 +87,6 @@ const DishExtendedInfoUpdateEdit: React.FC<DishExtendedInfoProps> = (props) => {
       const s3Response = await fetch(uploadUrl, {
         method: "PUT",
         body: file,
-        //Create 403 forbidden headers: { "Content-Type": file.type, "x-amz-acl": "public-read" },
       });
 
       if (!s3Response.ok) throw new Error(s3Response.statusText);
@@ -95,18 +94,24 @@ const DishExtendedInfoUpdateEdit: React.FC<DishExtendedInfoProps> = (props) => {
       const imageUrl = uploadUrl.split("?")[0]; // Extract clean URL
       setNewDishInfo({
         ...newDishInfo,
-        modifiers: {},
         imageSrc: imageUrl as string,
       });
 
-      console.log(newDishInfo);
+      const newDishInfoDeepCopy: IDish = JSON.parse(
+        JSON.stringify(newDishInfo)
+      );
+      newDishInfoDeepCopy.imageSrc = imageUrl;
+
+      // console.log("imageUrl: " + imageUrl);
+      // console.log("newDishInfo: " + newDishInfoDeepCopy.imageSrc);
+
       //Handle form upload
       const response = await fetch("../../../api/create_new_dish", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(newDishInfo),
+        body: JSON.stringify(newDishInfoDeepCopy),
       });
 
       const result = await response.json();
@@ -151,7 +156,6 @@ const DishExtendedInfoUpdateEdit: React.FC<DishExtendedInfoProps> = (props) => {
       const s3Response = await fetch(uploadUrl, {
         method: "PUT",
         body: file,
-        //Create 403 forbidden headers: { "Content-Type": file.type, "x-amz-acl": "public-read" },
       });
 
       if (!s3Response.ok) throw new Error(s3Response.statusText);
@@ -162,7 +166,6 @@ const DishExtendedInfoUpdateEdit: React.FC<DishExtendedInfoProps> = (props) => {
       const imageUrl = uploadUrl.split("?")[0]; // Extract clean URL
       setNewDishInfo({
         ...newDishInfo,
-        modifiers: {},
         imageSrc: imageUrl as string,
       });
 
@@ -188,8 +191,25 @@ const DishExtendedInfoUpdateEdit: React.FC<DishExtendedInfoProps> = (props) => {
   };
 
   const handleDeleteDish = async (e: React.FormEvent) => {
-    const s3DeleteResponse = await deleteFile(newDishInfo.imageSrc);
-    if (!s3DeleteResponse.ok) throw new Error(s3DeleteResponse.statusText);
+    // const s3DeleteResponse = await deleteFile(newDishInfo.imageSrc);
+    try {
+      const response = await fetch("../../api/delete_dish", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          key: newDishInfo.imageSrc,
+          dbItemId: newDishInfo._id,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) throw new Error(response.statusText);
+    } catch (error) {
+      console.error("Error deleting file:", error);
+    }
   };
 
   const deleteFile = async (fileKey: string) => {
@@ -199,7 +219,7 @@ const DishExtendedInfoUpdateEdit: React.FC<DishExtendedInfoProps> = (props) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ fileKey }),
+        body: JSON.stringify({ key: fileKey, dbItemId: "" }),
       });
 
       const result = await response.json();
@@ -208,6 +228,24 @@ const DishExtendedInfoUpdateEdit: React.FC<DishExtendedInfoProps> = (props) => {
       console.error("Error deleting file:", error);
     }
   };
+
+  // async function handleDelete() {
+  //   try {
+  //     const response = await fetch("/api/s3-delete", {
+  //       method: "DELETE",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ key }),
+  //     });
+  //     const data = await response.json();
+  //     if (!response.ok) {
+  //       throw new Error(data.error || "Failed to delete file.");
+  //     }
+  //     alert("File deleted successfully!");
+  //   } catch (err) {
+  //     console.error(err);
+  //     alert("Error deleting file");
+  //   }
+  // }
 
   return (
     <div
@@ -248,7 +286,6 @@ const DishExtendedInfoUpdateEdit: React.FC<DishExtendedInfoProps> = (props) => {
             Create Dish
           </button>
         )}
-
         <button
           onClick={props.onClose}
           className="bg-blue-500 h-5/6 mr-1 text-white rounded-md shadow-md hover:bg-blue-600 transition duration-300"
@@ -392,20 +429,6 @@ const DishExtendedInfoUpdateEdit: React.FC<DishExtendedInfoProps> = (props) => {
               handleInputValueChange(e);
             }}
           />
-          {/* <label htmlFor="dish_modifiers">Modifiers</label>
-          <input
-            name="modifiers"
-            id="dish_modifiers"
-            type="text"
-            placeholder="Enter Dish Modifiers"
-            className="pl-1 bg-slate-100"
-            onChange={(e) => {
-              handleInputValueChange(e);
-            }}
-          /> */}
-          {/* <button className="col-span-2 bg-red-600 rounded-md grid-cols-2 p-2 px-6">
-            Delete Dish
-          </button> */}
         </div>
         <ModifiersList editMode={true}></ModifiersList>
       </form>

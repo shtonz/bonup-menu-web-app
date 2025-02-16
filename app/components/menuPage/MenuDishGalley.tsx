@@ -1,8 +1,8 @@
 "use client";
 import React, { createContext, useEffect, useState } from "react";
 import { DishCardProps, DishMenuCard } from "./DishMenuCard";
-import { MenuNavBar } from "./MenuNavBar";
-import { DishObject } from "@/app/data/models/Dish";
+import MenuNavBar from "./MenuNavBar";
+import { IDish } from "@/app/data/models/DishModel";
 import DishExtendedInfo from "./DishExtendedInfo";
 import DishExtendedInfoUpdateEdit from "./DishExtendedInfoUpdateEdit";
 import CarouselNavbar from "./CarouselNavbar";
@@ -13,9 +13,9 @@ type MenuDishGalleyProps = {
 
 export const MenuDishGalley: React.FC<MenuDishGalleyProps> = (props) => {
   const [isVisible, setIsVisible] = useState(false);
-
-  const [dishExtendedInfo, setDishExtendedInfo] = useState<DishObject>({
-    id: 0,
+  const [dishExtendedInfo, setDishExtendedInfo] = useState<IDish>({
+    _id: "",
+    uiId: 0,
     name: "",
     category: "",
     subCategory: "",
@@ -24,15 +24,15 @@ export const MenuDishGalley: React.FC<MenuDishGalleyProps> = (props) => {
     isPromotedSize: false,
     bannerText: "",
     price: 0,
-    modifiers: {},
+    ModifiersListItems: [],
     imageSrc:
       "https://bonupp.s3.eu-north-1.amazonaws.com/FirstRestaurant/dishes_images/19.jpg",
     iconSrc: "",
     score: 0,
     cost: 0,
   });
-
-  const [dishes, setDishes] = useState<DishObject[] | null>(null);
+  const [dishes, setDishes] = useState<IDish[] | null>(null);
+  const [categories, setCategories] = useState<string[]>([]);
 
   const handleDishClicked = (
     e: React.MouseEvent<HTMLDivElement>,
@@ -40,6 +40,7 @@ export const MenuDishGalley: React.FC<MenuDishGalleyProps> = (props) => {
   ) => {
     setIsVisible(true);
     setDishExtendedInfo(dishCardProps.dishProps);
+    console.log(dishCardProps.dishProps._id);
   };
 
   useEffect(() => {
@@ -52,8 +53,10 @@ export const MenuDishGalley: React.FC<MenuDishGalleyProps> = (props) => {
             errorData.message || `HTTP error! status: ${res.status}`
           );
         }
-        const data: DishObject[] = await res.json();
+        const data: IDish[] = await res.json();
         setDishes(data);
+
+        setCategories(Array.from(new Set(data.map((dish) => dish.category))));
       } catch (err: any) {
         console.error("Error fetching dishes:", err);
       }
@@ -65,23 +68,58 @@ export const MenuDishGalley: React.FC<MenuDishGalleyProps> = (props) => {
   const handleExtexdedInfoClose = () => {
     setIsVisible(false);
   };
-
+  return <></>;
   return (
     <>
-      {props.isEditmode ? (
-        <MenuNavBar></MenuNavBar>
-      ) : (
-        <CarouselNavbar></CarouselNavbar>
-      )}
+      <MenuNavBar categories={[]}></MenuNavBar>
 
       <div className="bg-white max-w-6xl mx-auto p-1">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
-          {dishes?.map((dish: DishObject) => (
-            <DishMenuCard
-              dishProps={dish}
-              onClick={handleDishClicked}
-            ></DishMenuCard>
-          ))}
+        <div>
+          {categories.map((category) => {
+            // Filter dishes belonging to the current category
+            const catDishes = dishes!.filter(
+              (dish) => dish.category === category
+            );
+
+            // Extract unique subcategories for this category
+            const subCategories = Array.from(
+              new Set(catDishes.map((dish) => dish.subCategory))
+            );
+
+            return (
+              <div key={category}>
+                {/* Category title */}
+                <h2 id={category}></h2>
+
+                {subCategories.map((subCategory) => {
+                  // Filter dishes belonging to the current subcategory
+                  const subCatDishes = catDishes.filter(
+                    (dish) => dish.subCategory === subCategory
+                  );
+
+                  return (
+                    <div key={subCategory}>
+                      {/* Subcategory title */}
+                      <h3 className="text-xl underline font-semibold text-slate-500">
+                        {subCategory}
+                      </h3>
+
+                      {/* Render the dishes */}
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
+                        {subCatDishes.map((dish) => (
+                          <DishMenuCard
+                            key={dish._id}
+                            dishProps={dish}
+                            onClick={handleDishClicked}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })}
         </div>
       </div>
       {props.isEditmode ? (

@@ -28,20 +28,22 @@ const ReviewOrder: React.FC<OrderListProps> = ({ title, avatar, status }) => {
   };
 
   //Increase item count
-  const incrementCount = (id: number) => {
+  const incrementCount = (uiId: number) => {
     setOrderItems(
       orderItems.map((item) =>
-        item.dishProps.id === id ? { ...item, count: item.count + 1 } : item
+        item.dishProps.uiId === uiId ? { ...item, count: item.count + 1 } : item
       )
     );
   };
 
   //Decrease item count or remove item if count is 1
-  const decrementCount = (id: number) => {
+  const decrementCount = (uiId: number) => {
     setOrderItems(
       orderItems
         .map((item) =>
-          item.dishProps.id === id ? { ...item, count: item.count - 1 } : item
+          item.dishProps.uiId === uiId
+            ? { ...item, count: item.count - 1 }
+            : item
         )
         .filter((item) => item.count > 0)
     );
@@ -85,12 +87,12 @@ const ReviewOrder: React.FC<OrderListProps> = ({ title, avatar, status }) => {
                 {item.count === 1 ? (
                   <TrashIcon
                     className="w-6 h-6 text-red-500 cursor-pointer"
-                    onClick={() => decrementCount(item.dishProps.id)}
+                    onClick={() => decrementCount(item.dishProps.uiId)}
                   />
                 ) : (
                   <MinusCircleIcon
                     className="w-6 h-6 text-gray-500 cursor-pointer"
-                    onClick={() => decrementCount(item.dishProps.id)}
+                    onClick={() => decrementCount(item.dishProps.uiId)}
                   />
                 )}
 
@@ -100,7 +102,7 @@ const ReviewOrder: React.FC<OrderListProps> = ({ title, avatar, status }) => {
 
                 <PlusCircleIcon
                   className="w-6 h-6 text-green-500 cursor-pointer"
-                  onClick={() => incrementCount(item.dishProps.id)}
+                  onClick={() => incrementCount(item.dishProps.uiId)}
                 />
               </div>
             </div>

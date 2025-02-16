@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { DishObject } from "@/app/data/models/Dish";
+import { IDish } from "@/app/data/models/DishModel";
 import {
   ArrowRightIcon,
   MinusCircleIcon,
@@ -11,14 +11,14 @@ import ListComponent from "../Dashboard/ModifiersList";
 import ModifiersList from "../Dashboard/ModifiersList";
 
 type DishExtendedInfoProps = {
-  dishProps: DishObject;
+  dishProps: IDish;
   isVisible: boolean;
   onClose: () => void;
 };
 
 const DishExtendedInfo: React.FC<DishExtendedInfoProps> = (props) => {
   const [isVisible, setIsVisible] = useState(false);
-  const [newDishInfo, setNewDishInfo] = useState<DishObject>(props.dishProps);
+  const [newDishInfo, setNewDishInfo] = useState<IDish>(props.dishProps);
   const [dishCount, setDishCount] = useState(1);
 
   const { addOrderItem } = useOrderItems();

@@ -1,10 +1,10 @@
 "use client";
 import React from "react";
 import Image from "next/image";
-import { DishObject } from "@/app/data/models/Dish";
+import { IDish } from "@/app/data/models/DishModel";
 
 export type DishCardProps = {
-  dishProps: DishObject;
+  dishProps: IDish;
   onClick: (
     e: React.MouseEvent<HTMLDivElement>,
     dishInfo: DishCardProps

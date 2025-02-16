@@ -1,13 +1,12 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "../../data/DB";
-import Dish, { DishObject } from "../../data/models/Dish";
+import Dish, { IDish } from "../../data/models/DishModel";
 
 export async function POST(req: Request) {
   try {
-    const dishProps: DishObject = await req.json();
-    // const { name, category, description, isPromoted, price, imageSrc } =
-    //   await req.json();
+    const dishProps: IDish = await req.json();
 
+    //#region
     // // Validate input
     // if (
     //   !name ||
@@ -22,10 +21,11 @@ export async function POST(req: Request) {
     //     { status: 400 }
     //   );
     // }
+    //#endregion
 
     // Connect to MongoDB
     await connectToDatabase();
-    console.log("await connectToDatabase");
+    console.log("Connected To Database");
 
     // Save the dish to the database
     const newDish = new Dish({
@@ -40,7 +40,7 @@ export async function POST(req: Request) {
       iconSrc: dishProps.iconSrc,
       score: dishProps.score,
       cost: dishProps.cost,
-      modifiers: dishProps.modifiers,
+      ModifiersListItems: dishProps.ModifiersListItems,
       imageSrc: dishProps.imageSrc,
     });
 

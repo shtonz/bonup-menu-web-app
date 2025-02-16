@@ -1,9 +1,9 @@
-import mongoose, { Schema, Types } from "mongoose";
-import { Modifiers } from "./Modifiers";
+import mongoose, { Model, models, Schema, Types } from "mongoose";
+import { ListItemSchema, ModifiersListItem } from "./ModifiersListModel";
 
-//must be the same as DishSchema
-export type DishObject = {
-  id: number;
+export interface IDish {
+  _id: string;
+  uiId: number;
   name: string;
   category: string;
   subCategory: string;
@@ -15,12 +15,18 @@ export type DishObject = {
   iconSrc: string;
   score: number;
   cost: number;
-  modifiers: {};
   imageSrc: string;
-};
+  ModifiersListItems: ModifiersListItem[];
+}
+
+interface DishDocument extends IDish, Document {
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 const DishSchema = new mongoose.Schema(
   {
+    uiId: { type: Number, required: false },
     name: { type: String, required: true },
     category: { type: String, required: true },
     subCategory: { type: String, required: true },
@@ -28,21 +34,22 @@ const DishSchema = new mongoose.Schema(
     price: { type: Number, required: true },
     isPromoted: { type: Boolean, required: true },
     isPromotedSize: { type: Boolean, required: true },
-    bannerText: { type: String, required: true },
-    iconSrc: { type: String, required: true },
+    bannerText: { type: String, required: false },
+    iconSrc: { type: String, required: false },
     score: { type: Number, required: true },
     cost: { type: Number, required: true },
-    //Modifiers: { type: Modifiers, required: false },
     imageSrc: { type: String, required: true },
-    // restaurant: {
-    //   type: Schema.Types.ObjectId,
-    //   ref: "Restaurant",
-    //   required: true,
-    // }, // One-to-One relationship
+    ModifiersListItems: {
+      type: [Schema.Types.ObjectId],
+      ref: "ModifiersListItem",
+      default: [],
+    },
   },
   { timestamps: true }
 );
 
-const DishModel = mongoose.model("Dish", DishSchema);
+/** Compile the model (with dev check to avoid re-compilation) */
+const Dish: Model<DishDocument> =
+  models.Dish || mongoose.model<DishDocument>("Dish", DishSchema);
 
-export default DishModel;
+export default Dish;

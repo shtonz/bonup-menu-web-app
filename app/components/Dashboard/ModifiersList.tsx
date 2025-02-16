@@ -1,55 +1,42 @@
 "use client";
 
+import {
+  Option,
+  ModifiersListItem,
+  ITEM_TYPES,
+} from "@/app/data/models/ModifiersListModel";
+import { generateId } from "@/app/Utils/Utils";
 import React, { useState } from "react";
 
-/** Generate a unique ID (for demo). */
-function generateId() {
-  return Math.random().toString(36).substring(2, 9);
-}
+// const ITEM_TYPES = {
+//   RADIO: "RADIO",
+//   MULTI_SELECT: "MULTI_SELECT",
+// };
 
-/** Item types (only RADIO and MULTI_SELECT). */
-const ITEM_TYPES = {
-  RADIO: "RADIO",
-  MULTI_SELECT: "MULTI_SELECT",
-};
+// type Option = {
+//   id: string;
+//   label: string;
+//   selected: boolean;
+// };
 
-/**
- * Each toggle option in a Radio or Multi-select group.
- * - `label`: editable text
- * - `selected`: whether it's toggled on
- */
-type Option = {
-  id: string;
-  label: string;
-  selected: boolean;
-};
+// type RadioItem = {
+//   id: string;
+//   type: "RADIO";
+//   title: string;
+//   options: Option[];
+// };
 
-/**
- * For a RADIO group:
- * - `title`: an editable group title
- * - `options`: toggles (one can be selected)
- */
-type RadioItem = {
-  id: string;
-  type: "RADIO";
-  title: string;
-  options: Option[];
-};
-
-/**
- * For a MULTI_SELECT group:
- * - `title`: an editable group title
- * - `options`: toggles (multiple can be selected)
- */
-type MultiSelectItem = {
-  id: string;
-  type: "MULTI_SELECT";
-  title: string;
-  options: Option[];
-};
+// type MultiSelectItem = {
+//   id: string;
+//   type: "MULTI_SELECT";
+//   title: string;
+//   options: Option[];
+// };
 
 /** Union type for the allowed items. */
-type ListItem = RadioItem | MultiSelectItem;
+type ListItem = ModifiersListItem & {
+  id: string;
+};
 
 interface ListComponentProps {
   /**
@@ -63,15 +50,6 @@ interface ListComponentProps {
   editMode?: boolean;
 }
 
-/**
- * A Next.js + Tailwind component displaying a list of:
- * - Radio groups (title + toggles in a 2-col grid, only one selected)
- * - Multi-select groups (title + toggles in a 2-col grid, any selected)
- *
- * - Each grid cell is the same width (1/2 the container width) and auto-stretched for same height.
- * - Horizontal gap is maintained between columns.
- * - Radio group text is truncated to one line with ellipsis. (You can extend that behavior to multi-select if desired.)
- */
 const ModifiersList: React.FC<ListComponentProps> = ({ editMode = false }) => {
   // Example initial state
   const [items, setItems] = useState<ListItem[]>([
@@ -149,10 +127,10 @@ const ModifiersList: React.FC<ListComponentProps> = ({ editMode = false }) => {
    */
   const handleAddItem = (type: string) => {
     if (type === ITEM_TYPES.RADIO) {
-      const newItem: RadioItem = {
+      const newItem: ListItem = {
         id: generateId(),
         type: "RADIO",
-        title: "New Radio Group",
+        title: "Radio Group",
         options: [
           { id: generateId(), label: "Option 1", selected: false },
           { id: generateId(), label: "Option 2", selected: false },
@@ -160,10 +138,10 @@ const ModifiersList: React.FC<ListComponentProps> = ({ editMode = false }) => {
       };
       setItems((prev) => [...prev, newItem]);
     } else if (type === ITEM_TYPES.MULTI_SELECT) {
-      const newItem: MultiSelectItem = {
+      const newItem: ListItem = {
         id: generateId(),
         type: "MULTI_SELECT",
-        title: "New Multi-Select Group",
+        title: "Multi-Select Group",
         options: [
           { id: generateId(), label: "Option A", selected: false },
           { id: generateId(), label: "Option B", selected: false },
@@ -330,7 +308,7 @@ const ModifiersList: React.FC<ListComponentProps> = ({ editMode = false }) => {
   return (
     <div className="mx-auto max-w-3xl mt-5">
       {items.map((item) => (
-        <div>
+        <div key={item.id}>
           <div key={item.id} className="flex items-start justify-between mb-6">
             {/* Render the item content */}
             {renderItem(item)}

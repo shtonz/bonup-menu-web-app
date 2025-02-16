@@ -1,31 +1,72 @@
-import React from "react";
+"use client";
 
-export const MenuNavBar = () => {
+import React, { useState, useEffect } from "react";
+import classNames from "classnames";
+
+export interface NavBarCategory {
+  id: string;
+  name: string;
+}
+
+interface NavbarProps {
+  categories: NavBarCategory[];
+  selectedCategoryId?: string;
+  onCategorySelect: (category: NavBarCategory) => void;
+}
+
+const MenuNavBar: React.FC<NavbarProps> = ({
+  categories,
+  selectedCategoryId,
+  onCategorySelect,
+}) => {
+  const [internalSelectedId, setInternalSelectedId] = useState<string | null>(
+    selectedCategoryId ?? null
+  );
+
+  // If the parent passes a new selectedCategoryId, update our internal state
+  useEffect(() => {
+    if (selectedCategoryId !== undefined) {
+      setInternalSelectedId(selectedCategoryId);
+    }
+  }, [selectedCategoryId]);
+
+  const handleCategoryClick = (cat: NavBarCategory) => {
+    // If there's a parent callback, call it
+    onCategorySelect?.(cat);
+
+    // If we're not "controlled" by a parent, set our own state
+    if (selectedCategoryId === undefined) {
+      setInternalSelectedId(cat.id);
+    }
+  };
+
   return (
-    <div className="sticky shadow-md bg-white top-0 z-10">
-      <div className="flex overflow-x-auto whitespace-nowrap px-4 py-2 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
-        <a href="#" className="px-4 py-2 text-gray-700 hover:text-blue-500">
-          Main
-        </a>
-        <a href="#" className="px-4 py-2 text-gray-700 hover:text-blue-500">
-          Starters
-        </a>
-        <a href="#" className="px-4 py-2 text-gray-700 hover:text-blue-500">
-          Chef
-        </a>
-        <a href="#" className="px-4 py-2 text-gray-700 hover:text-blue-500">
-          Drinks
-        </a>
-        <a href="#" className="px-4 py-2 text-gray-700 hover:text-blue-500">
-          Desserts
-        </a>
-        <a href="#" className="px-4 py-2 text-gray-700 hover:text-blue-500">
-          Hot Drinks
-        </a>
-        <a href="#" className="px-4 py-2 text-gray-700 hover:text-blue-500">
-          Specials
-        </a>
-      </div>
-    </div>
+    <nav className="flex text-xl space-x-6 border-b bg-white border-gray-300 pb-2">
+      {categories.map((cat) => {
+        const isSelected = cat.id === internalSelectedId;
+        return (
+          <button
+            key={cat.id}
+            onClick={() => handleCategoryClick(cat)}
+            className={classNames(
+              "relative px-2 py-1 text-gray-700 hover:text-gray-900 focus:outline-none",
+              {
+                "font-semibold": isSelected, // optional styling for selected state
+              }
+            )}
+          >
+            {/* Category label */}
+            {cat.name}
+
+            {/* Underline element: absolutely positioned span */}
+            {isSelected && (
+              <span className="absolute left-0 right-0 bottom-0 h-0.5 bg-blue-500" />
+            )}
+          </button>
+        );
+      })}
+    </nav>
   );
 };
+
+export default MenuNavBar;

@@ -26,8 +26,8 @@ export async function DELETE(req: NextRequest) {
       Key: fileKey,
     };
 
-    await s3.send(new DeleteObjectCommand(params));
-
+    const response = await s3.send(new DeleteObjectCommand(params));
+    console.log(response);
     return NextResponse.json(
       { message: "File deleted successfully" },
       { status: 200 }

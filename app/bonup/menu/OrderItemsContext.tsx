@@ -1,9 +1,9 @@
-import { DishObject } from "@/app/data/models/Dish";
+import { IDish } from "@/app/data/models/DishModel";
 import React, { createContext, useContext, useState } from "react";
 
 export type OrderItem = {
   id: string;
-  dishProps: DishObject;
+  dishProps: IDish;
   count: number;
 };
 

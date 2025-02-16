@@ -8,7 +8,6 @@ export default function MenuPage() {
       <main className="pt-36 px-2">
         <DashboardNavBar></DashboardNavBar>
         <MenuSectionBar></MenuSectionBar>
-        <MenuDishGalley isEditmode={true}></MenuDishGalley>
       </main>
     </div>
   );
